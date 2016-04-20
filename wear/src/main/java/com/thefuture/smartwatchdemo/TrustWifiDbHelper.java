@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -58,6 +59,10 @@ public class TrustWifiDbHelper {
      * Return null if no result found.
      */
     public static WifiInfoItem getWifi(Context ctx, String bssID) {
+        if (TextUtils.isEmpty(bssID)) {
+            return null;
+        }
+
         SQLiteDatabase db = null;
         Cursor c = null;
 

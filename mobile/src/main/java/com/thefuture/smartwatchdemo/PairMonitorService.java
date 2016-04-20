@@ -15,6 +15,7 @@ import com.google.android.gms.wearable.CapabilityInfo;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
@@ -74,6 +75,7 @@ public class PairMonitorService extends WearableListenerService implements Googl
         super.onDestroy();
     }
 
+    // TODO: research exception "Unexpected number of DataItems found". Temporarily use MessageApi to transfer data
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
         Log.d(TAG, "onDataChanged: " + dataEvents);
@@ -89,6 +91,21 @@ public class PairMonitorService extends WearableListenerService implements Googl
                 } else {
                     Utility.cancelAlarm(getApplicationContext());
                 }
+            }
+        }
+    }
+
+    @Override
+    public void onMessageReceived(MessageEvent messageEvent) {
+        super.onMessageReceived(messageEvent);
+        Log.d(TAG, "receive message from path " + messageEvent.getPath());
+        if (messageEvent.getPath().equals("/path_alarm_state")) {
+            final boolean alarmOn = Boolean.valueOf(new String(messageEvent.getData()));
+            Log.d(TAG, "message says alarm on ? " + alarmOn);
+            if (alarmOn) {
+                onAlarmTriggered();
+            } else {
+                Utility.cancelAlarm(getApplicationContext());
             }
         }
     }

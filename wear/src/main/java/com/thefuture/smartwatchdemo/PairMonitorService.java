@@ -92,6 +92,10 @@ public class PairMonitorService extends WearableListenerService implements Googl
         Log.d(TAG, "receive message from path " + messageEvent.getPath());
         if (messageEvent.getPath().equals("/path_trust_wifi")) {
             TrustWifiDbHelper.parseWifisJSONAndSaveToDB(getApplicationContext(), new String(messageEvent.getData()));
+        } else if (messageEvent.getPath().equals("/path_alarm_state")) {
+            final boolean alarmOn = Boolean.valueOf(new String(messageEvent.getData()));
+            Settings.setAlarmOn(getApplicationContext(), alarmOn);
+            Log.d(TAG, "message says alarm on ? " + alarmOn);
         }
     }
 

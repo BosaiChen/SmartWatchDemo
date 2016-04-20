@@ -33,7 +33,7 @@ public class FindMyPhoneAlarmActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         Utility.cancelAlarm(getApplicationContext());
-        FindPhoneService.broadcastAlarmStateChange(getApplicationContext(), false);
+        FindPhoneService.sendMsgToUpdateAlarmState(getApplicationContext(), false);
         super.onDestroy();
     }
 }

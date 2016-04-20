@@ -14,11 +14,9 @@ public class Notifier {
                 new NotificationCompat.Builder(ctx)
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentTitle(title)
-                        .setContentText(deviceName + " is disconnected")
-//                        .setContentIntent(viewPendingIntent)
+                        .setContentText(ctx.getString(R.string.alert))
                         .setPriority(NotificationCompat.PRIORITY_MAX)
                         .setLocalOnly(true)
-//                        .setVibrate(new long[] {0, 50});
                         .setVibrate(new long[]{500, 500, 500, 500});
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(ctx);

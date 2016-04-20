@@ -24,12 +24,16 @@ public class FindPhoneService extends IntentService implements GoogleApiClient.C
     private static final String TAG = "SmartWatchDemoPhone";
 
     public static final String PATH_TRUST_WIFI = "/path_trust_wifi";
+    public static final String PATH_ALARM_STATE = "/path_alarm_state";
 
     public static final String ACTION_BROADCAST_ALARM_STATE_CHANGE = "action_broadcast_alarm_state_change";
     public static final String EXTRA_KEY_ALARM_STATE = "extra.key.ALARM_STATE";
 
-    private static final String ACTION_SEND_MSG_UPDATE_TRUST_WIFI = "action.SEND_MSG_UPDATE_TRUST_WIFI";
+    public static final String ACTION_SEND_MSG_UPDATE_TRUST_WIFI = "action.SEND_MSG_UPDATE_TRUST_WIFI";
     public static final String EXTRA_KEY_MSG_TRUST_WIFI = "extra.key.MSG_TRUST_WIFI";
+
+    public static final String ACTION_SEND_MSG_UPDATE_ALARM_STATE = "action.SEND_MSG_UPDATE_ALARM_STATE";
+    public static final String EXTRA_KEY_MSG_ALARM_STATE = "extra.key.MSG_ALARM_STATE";
 
     // Timeout for making a connection to GoogleApiClient (in milliseconds).
     private static final long CONNECTION_TIME_OUT_MS = 100;
@@ -62,22 +66,10 @@ public class FindPhoneService extends IntentService implements GoogleApiClient.C
             } else if (intent.getAction().equals(ACTION_SEND_MSG_UPDATE_TRUST_WIFI)) {
                 // transfer updated trust wifi list to wear app
                 final String msgData = intent.getStringExtra(EXTRA_KEY_MSG_TRUST_WIFI);
-                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
-                for (Node node : nodes.getNodes()) {
-                    Log.d(TAG, "connected node:" + node.getDisplayName());
-                    final Node tmpNode = node;
-                    PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(mGoogleApiClient, tmpNode.getId(), PATH_TRUST_WIFI, msgData.getBytes());
-                    result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
-                        @Override
-                        public void onResult(MessageApi.SendMessageResult sendMessageResult) {
-                            if (sendMessageResult.getStatus().isSuccess()) {
-                                Log.v(TAG, "Message: {" + msgData + "} sent to: " + tmpNode.getDisplayName());
-                            } else {
-                                Log.v(TAG, "ERROR: failed to send Message");
-                            }
-                        }
-                    });
-                }
+                sendMessage(PATH_TRUST_WIFI, msgData);
+            } else if (intent.getAction().equals(ACTION_SEND_MSG_UPDATE_ALARM_STATE)) {
+                final String msgData = intent.getStringExtra(EXTRA_KEY_MSG_ALARM_STATE);
+                sendMessage(PATH_ALARM_STATE, msgData);
             }
 
         } else {
@@ -111,5 +103,31 @@ public class FindPhoneService extends IntentService implements GoogleApiClient.C
         intent.setAction(ACTION_SEND_MSG_UPDATE_TRUST_WIFI);
         intent.putExtra(EXTRA_KEY_MSG_TRUST_WIFI, msgData);
         ctx.startService(intent);
+    }
+
+    public static void sendMsgToUpdateAlarmState(Context ctx, boolean alarmOn) {
+        Intent intent = new Intent(ctx, FindPhoneService.class);
+        intent.setAction(ACTION_SEND_MSG_UPDATE_ALARM_STATE);
+        intent.putExtra(EXTRA_KEY_MSG_ALARM_STATE, String.valueOf(alarmOn));
+        ctx.startService(intent);
+    }
+
+    private void sendMessage(String path, final String msgData) {
+        NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
+        for (Node node : nodes.getNodes()) {
+            Log.d(TAG, "connected node:" + node.getDisplayName());
+            final Node tmpNode = node;
+            PendingResult<MessageApi.SendMessageResult> result = Wearable.MessageApi.sendMessage(mGoogleApiClient, tmpNode.getId(), path, msgData.getBytes());
+            result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
+                @Override
+                public void onResult(MessageApi.SendMessageResult sendMessageResult) {
+                    if (sendMessageResult.getStatus().isSuccess()) {
+                        Log.v(TAG, "Message: {" + msgData + "} sent to: " + tmpNode.getDisplayName());
+                    } else {
+                        Log.v(TAG, "ERROR: failed to send Message");
+                    }
+                }
+            });
+        }
     }
 }

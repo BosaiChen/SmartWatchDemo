@@ -5,9 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 public class ConnectivityMonitor extends BroadcastReceiver {
@@ -48,7 +46,6 @@ public class ConnectivityMonitor extends BroadcastReceiver {
                 }
 
                 Log.d(TAG, "wifi " + wifi.displayName + " is trusted, not show notification");
-//                logInfo(context, "wifi ssid:" + wifiInfo.getSSID() + "|| Mac: " + wifiInfo.getMacAddress());
             }
         }
 
@@ -59,39 +56,6 @@ public class ConnectivityMonitor extends BroadcastReceiver {
         }
 
 
-    }
-
-    /*private String getUnsecureWiFiIdentifier(final Context context) {
-        final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        final List<ScanResult> networkList = wifiManager.getScanResults();
-        final WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        if (networkList != null) {
-            final String currentSSID = getSSIDFromWifiInfo(wifiInfo);
-            final String currentBSSID = getBSSIDFromWifiInfo(wifiInfo);
-            if (currentSSID != null && currentBSSID != null) {
-                for (final ScanResult network : networkList) {
-                    if (currentSSID.equals(network.SSID) && currentBSSID.equals(network.BSSID)) {
-                        final String capabilities = network.capabilities;
-                        if (capabilities != null && !capabilities.contains(SECURE_WIFI_PROTOCOL)) {
-                            return currentSSID;
-                        }
-                    }
-                }
-            }
-        }
-        return null;
-    }*/
-
-    private String getSSIDFromWifiInfo(@NonNull final WifiInfo wifiInfo) {
-        final String currentSSID = wifiInfo.getSSID();
-        if (currentSSID != null && currentSSID.startsWith("\"") && currentSSID.endsWith("\"")) {
-            return currentSSID.substring(1, currentSSID.length() - 1);
-        }
-        return currentSSID;
-    }
-
-    private String getBSSIDFromWifiInfo(@NonNull final WifiInfo wifiInfo) {
-        return wifiInfo.getBSSID();
     }
 
     private void logInfo(Context ctx, String info) {

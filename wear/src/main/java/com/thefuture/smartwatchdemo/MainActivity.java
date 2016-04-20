@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
                     @Override
                     public void onClick(View v) {
                         mAlarmOn = !mAlarmOn;
-                        FindPhoneService.broadcastAlarmStateChange(getApplicationContext(), mAlarmOn);
+                        FindPhoneService.sendMsgToUpdateAlarmState(getApplicationContext(), mAlarmOn);
                         updateAlarmAction(mAlarmOn);
                         Settings.setAlarmOn(getApplicationContext(), mAlarmOn);
                     }

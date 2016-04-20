@@ -11,7 +11,7 @@ public class Settings {
     public static final String KEY_ALARM_ON = "key.ALARM_ON";
 
     public static void setPeerDisconnected(Context ctx, boolean disconnected) {
-        getSharedPreference(ctx).edit().putBoolean(KEY_PEER_DISCONNECTED, disconnected);
+        getSharedPreference(ctx).edit().putBoolean(KEY_PEER_DISCONNECTED, disconnected).apply();
     }
 
     public static boolean getPeerDisconnected(Context ctx) {
@@ -19,7 +19,7 @@ public class Settings {
     }
 
     public static void setLastConnectedPeerName(Context ctx, String name) {
-        getSharedPreference(ctx).edit().putString(KEY_LAST_CONNECTED_PEER_NAME, name);
+        getSharedPreference(ctx).edit().putString(KEY_LAST_CONNECTED_PEER_NAME, name).apply();
     }
 
     public static String getLastConnectedPeerName(Context ctx) {
@@ -31,7 +31,7 @@ public class Settings {
     }
 
     public static void setAlarmOn(Context ctx, boolean alarmOn) {
-        getSharedPreference(ctx).edit().putBoolean(KEY_ALARM_ON, alarmOn);
+        getSharedPreference(ctx).edit().putBoolean(KEY_ALARM_ON, alarmOn).apply();
     }
 
     /**
