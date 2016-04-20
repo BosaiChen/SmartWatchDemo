@@ -3,6 +3,10 @@
     package="com.thefuture.smartwatchdemo">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -10,10 +14,19 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service
+            android:name=".PairMonitorService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,19 +34,27 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".FeatureScrollingActivity"
-            android:label="@string/title_activity_feature_scrolling"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
+            android:name=".trustwifi.TrustWifiActivity"
+            android:label="@string/activity_title_trust_wifi"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
         <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.thefuture.smartwatchdemo.FeatureScrollingActivity" />
-        </activity>
+            android:name=".FindMyPhone.FindMyPhoneAlarmActivity"
+            android:label="@string/find_my_phone_alarm"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait" />
+
+        <service android:name=".FindMyPhone.FindPhoneService" />
+
+        <activity
+            android:name=".WhatsNewActivity"
+            android:label="@string/card_title_whats_new"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".AboutActivity"
+            android:label="@string/activity_about"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".MainActivity"></activity>
     </application>
 
 </manifest>

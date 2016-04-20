@@ -1,64 +1,72 @@
 package com.thefuture.smartwatchdemo;
 
+import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.wearable.activity.WearableActivity;
-import android.support.wearable.view.BoxInsetLayout;
+import android.support.wearable.view.ActionPage;
+import android.support.wearable.view.WatchViewStub;
 import android.view.View;
-import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+public class MainActivity extends Activity {
+    private ActionPage mAlarmAction;
+    private boolean mAlarmOn;
 
-public class MainActivity extends WearableActivity {
-
-    private static final SimpleDateFormat AMBIENT_DATE_FORMAT =
-            new SimpleDateFormat("HH:mm", Locale.US);
-
-    private BoxInsetLayout mContainerView;
-    private TextView mTextView;
-    private TextView mClockView;
+    private SharedPreferences.OnSharedPreferenceChangeListener mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (key.equals(Settings.KEY_ALARM_ON)) {
+                mAlarmOn = Settings.getAlarmOn(getApplicationContext());
+                updateAlarmAction(mAlarmOn);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setAmbientEnabled();
 
-        mContainerView = (BoxInsetLayout) findViewById(R.id.container);
-        mTextView = (TextView) findViewById(R.id.text);
-        mClockView = (TextView) findViewById(R.id.clock);
+        mAlarmOn = Settings.getAlarmOn(this);
+        Settings.getSharedPreference(this).registerOnSharedPreferenceChangeListener(mListener);
+
+        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
+        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
+            @Override
+            public void onLayoutInflated(WatchViewStub stub) {
+                mAlarmAction = (ActionPage) stub.findViewById(R.id.alarm_action);
+                updateAlarmAction(mAlarmOn);
+
+                mAlarmAction.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mAlarmOn = !mAlarmOn;
+                        FindPhoneService.broadcastAlarmStateChange(getApplicationContext(), mAlarmOn);
+                        updateAlarmAction(mAlarmOn);
+                        Settings.setAlarmOn(getApplicationContext(), mAlarmOn);
+                    }
+                });
+            }
+        });
     }
 
     @Override
-    public void onEnterAmbient(Bundle ambientDetails) {
-        super.onEnterAmbient(ambientDetails);
-        updateDisplay();
+    protected void onResume() {
+        super.onResume();
+        mAlarmOn = Settings.getAlarmOn(this);
+        FindPhoneService.getAlarmStateFromGA(this);
     }
 
     @Override
-    public void onUpdateAmbient() {
-        super.onUpdateAmbient();
-        updateDisplay();
+    protected void onDestroy() {
+        Settings.getSharedPreference(this).unregisterOnSharedPreferenceChangeListener(mListener);
+        super.onDestroy();
     }
 
-    @Override
-    public void onExitAmbient() {
-        updateDisplay();
-        super.onExitAmbient();
-    }
+    private void updateAlarmAction(boolean alarmOn) {
+        String actionText = alarmOn ? getString(R.string.tap_to_stop) : getString(R.string.tap_to_find);
+        int actionImg = alarmOn ? R.drawable.ic_alarm_off_white_24dp : R.drawable.ic_alarm_white_24dp;
 
-    private void updateDisplay() {
-        if (isAmbient()) {
-            mContainerView.setBackgroundColor(getResources().getColor(android.R.color.black));
-            mTextView.setTextColor(getResources().getColor(android.R.color.white));
-            mClockView.setVisibility(View.VISIBLE);
-
-            mClockView.setText(AMBIENT_DATE_FORMAT.format(new Date()));
-        } else {
-            mContainerView.setBackground(null);
-            mTextView.setTextColor(getResources().getColor(android.R.color.black));
-            mClockView.setVisibility(View.GONE);
-        }
+        mAlarmAction.setText(actionText);
+        mAlarmAction.setImageResource(actionImg);
     }
 }
