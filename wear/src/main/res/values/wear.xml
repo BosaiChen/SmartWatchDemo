@@ -1,0 +1,6 @@
+<resources>
+    <string-array name="android_wear_capabilities">
+        <item>capability_trust_wifi</item>
+    </string-array>
+</resources>
+
