@@ -3,4 +3,11 @@
     <color name="colorPrimary">#337c34</color>
     <color name="colorPrimaryDark">#2e6e2d</color>
     <color name="colorAccent">#337c34</color>
+
+    <color name="brunette_disabled">#80ffffff</color>
+
+    <color name="green1">#339933</color>
+    <color name="green2">#337c34</color>
+    <color name="green3">#2e6e2d</color>
+    <color name="green4">#245f22</color>
 </resources>

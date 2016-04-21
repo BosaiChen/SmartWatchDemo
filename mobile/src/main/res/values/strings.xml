@@ -12,7 +12,7 @@
     <string name="trust_wifi_desc">For trusted Wifi, notification is not shown when phone is out of Bluetooth range</string>
     <string name="whats_new_desc">New Features: FindMyPhone alarm, phone out-of-range notification and trust wifi. Click to see details.</string>
     <string name="title_activity_test_drawer">TestDrawerActivity</string>
-    <string name="find_my_phone_alarm">FindMyPhoneAlarm</string>
+    <string name="find_my_phone_alarm">Norton FindMyPhone Alarm</string>
     <string name="stop">stop</string>
     <string name="activity_about">About</string>
 

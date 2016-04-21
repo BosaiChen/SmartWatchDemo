@@ -49,7 +49,9 @@ public class PairMonitorService extends WearableListenerService implements Googl
         Log.d(TAG, "onPeerConnected: " + peer);
         Settings.setLastConnectedPeerName(getApplicationContext(), peer.getDisplayName());
         Settings.setPeerDisconnected(getApplicationContext(), false);
-        Notifier.cancelNotification(getApplicationContext(), Notifier.NOTIFICATION_ID_DEVICE_DISCONNECTED);
+        if (peer.isNearby()) {
+            Notifier.cancelNotification(getApplicationContext(), Notifier.NOTIFICATION_ID_DEVICE_DISCONNECTED);
+        }
     }
 
     @Override
@@ -57,7 +59,8 @@ public class PairMonitorService extends WearableListenerService implements Googl
         super.onPeerDisconnected(peer);
         Log.d(TAG, "onPeerDisconnected: " + peer);
         Settings.setPeerDisconnected(getApplicationContext(), true);
-        Notifier.notifyDeviceDisconnected(getApplicationContext(), peer.getDisplayName());
+
+//        Notifier.notifyDeviceDisconnected(getApplicationContext(), peer.getDisplayName());
     }
 
     @Override
@@ -122,7 +125,7 @@ public class PairMonitorService extends WearableListenerService implements Googl
     private void updateFindMeCapability(CapabilityInfo capabilityInfo) {
         Set<Node> connectedNodes = capabilityInfo.getNodes();
         if (connectedNodes.isEmpty()) {
-            Notifier.notifyDeviceDisconnected(getApplicationContext(), "Your device ");
+//            Notifier.notifyDeviceDisconnected(getApplicationContext(), "Your device ");
         } else {
             for (Node node : connectedNodes) {
                 // we are only considering those nodes that are directly connected

@@ -24,6 +24,10 @@ public class ConnectivityMonitor extends BroadcastReceiver {
             final boolean noConnection = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
             if (noConnection) {
                 Log.d(TAG, "no connection, phone may be insecure, show notification");
+//                Intent alarmIntent = new Intent(context, CheckNetworkReceiver.class);
+//                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+//                AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+//                am.setExact(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 15000, pendingIntent);
 //                Notifier.notifyDeviceDisconnected(context, "your device");
 //                return;
             }
@@ -38,19 +42,22 @@ public class ConnectivityMonitor extends BroadcastReceiver {
             if (networkType == ConnectivityManager.TYPE_WIFI) {
                 final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
                 final String bssid = wifiManager.getConnectionInfo().getBSSID();
-                WifiInfoItem wifi = TrustWifiDbHelper.getWifi(context, bssid);
-                if (wifi == null || !wifi.trust) {
-                    Log.d(TAG, "wifi is not trusted");
-                    Notifier.notifyDeviceDisconnected(context, "your device");
-                    return;
-                }
+                if (bssid != null) {
+                    WifiInfoItem wifi = TrustWifiDbHelper.getWifi(context, bssid);
+                    if (wifi == null || !wifi.trust) {
+                        Log.d(TAG, "wifi is not trusted");
+                        Notifier.notifyDeviceDisconnected(context, "your device");
+                        return;
+                    }
 
-                Log.d(TAG, "wifi " + wifi.displayName + " is trusted, not show notification");
+                    Log.d(TAG, "wifi " + wifi.displayName + " is trusted, not show notification");
+                }
             }
         }
 
         final ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         final NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
+        Log.d(TAG, "networkinfo == null?" + (networkInfo==null));
         if (networkInfo != null) {
             logInfo(context, networkInfo.getTypeName());
         }

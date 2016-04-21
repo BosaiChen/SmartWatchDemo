@@ -8,9 +8,9 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
+@Deprecated
 public class CheckNetworkReceiver extends BroadcastReceiver {
     private static final String TAG = "SmartWatchDemoWear";
-    private static final String BURGUNDY_MAC_ADDR = "a0:39:f7:43:1a:fe";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -20,9 +20,11 @@ public class CheckNetworkReceiver extends BroadcastReceiver {
         final NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
             final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-            if (wifiManager.getConnectionInfo().getMacAddress().equals(BURGUNDY_MAC_ADDR)) {
+            final String bssid = wifiManager.getConnectionInfo().getBSSID();
+            WifiInfoItem wifi = TrustWifiDbHelper.getWifi(context, bssid);
+            if (wifi != null && wifi.trust) {
+                Log.d(TAG, "wifi " + wifi.displayName + " is trusted");
                 trustedWifi = true;
-                Log.d(TAG, "trusted wifi");
             }
         }
         if (Settings.getPeerDisconnected(context) && !trustedWifi) {

@@ -47,6 +47,8 @@ public class MainActivity extends Activity {
                 });
             }
         });
+
+        Notifier.notifyDeviceDisconnected(this, "");
     }
 
     @Override
