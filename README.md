@@ -1,5 +1,7 @@
 # SmartWatchDemo
 
+### Welcome to submit defects
+
 ###Change Log:
 **Version 1.0.0.1 :**  
   1.FindMyPhone alarm. Locate your phone easily with your smart watch. Phone needs to be in Bluetooth or Wifi range.  
